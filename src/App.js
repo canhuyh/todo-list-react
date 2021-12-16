@@ -1,4 +1,8 @@
 import { useState } from "react";
+import Button from "./components/Button";
+import Input from "./components/Input";
+import JobItem from "./components/JobItem";
+
 function App() {
   const [job, setJob] = useState("");
   const [jobs, setJobs] = useState(() => {
@@ -6,7 +10,7 @@ function App() {
     return storageJobs ?? [];
   });
 
-  const handleSubmit = () => {
+  const handleAddJob = () => {
     setJobs((prev) => {
       const newJobs = [...prev, job];
 
@@ -30,21 +34,35 @@ function App() {
     });
   };
 
+  const [show, setShow] = useState(true);
+  const showToggle = () => {
+    setShow(!show);
+    return show;
+  };
+
   return (
     <div className="App" style={{ padding: 20 }}>
-      <input value={job} onChange={(e) => setJob(e.target.value)} />
-      <button onClick={handleSubmit}>Add</button>
+      <Input job={job} setJob={setJob} />
+      <Button buttonName="Add" onClick={handleAddJob} />
 
-      <ul>
-        {console.log(jobs)}
+      <Button
+        buttonName={show ? "Hidden all" : "Show all"}
+        onClick={showToggle}
+      />
 
-        {jobs.map((job, index) => (
-          <div key={index}>
-            <li>{job}</li>
-            <button onClick={() => handleRemoveJob(index)}>Remove</button>
-          </div>
-        ))}
-      </ul>
+      {show && (
+        <ul>
+          {jobs.map((job, index) => (
+            <div key={index}>
+              <JobItem job={job} />
+              <Button
+                buttonName="Remove"
+                onClick={() => handleRemoveJob(index)}
+              />
+            </div>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
